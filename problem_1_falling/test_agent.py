@@ -2,7 +2,10 @@ from utils import read_cfg
 from falling_objects_env import FallingObjects, PLAYER_KEYS, ACTIONS
 from argparse import ArgumentParser
 from demo_agent import DemoAgent
+from dqn_agent import DQNAgent
 import importlib
+
+BATCH_SIZE = 50
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser()
@@ -27,13 +30,19 @@ if __name__ == "__main__":
 
     env = FallingObjects(cfg)
 
-    agent = test_agent(max(ACTIONS.keys()))
+    #agent = test_agent(max(ACTIONS.keys()))
+    agent = DQNAgent()
     all_r = 0
     obs = env.reset()
 
-    for _ in range(test_steps):
+    for i in range(test_steps):
         action = agent.act(obs)
-        obs, r, done, _ = env.step(action)  # take a random action
+
+        next_obs, r, done, _ = env.step(action)
+        agent.remember(obs, action, r, next_obs, done)
+        obs = next_obs
+
         all_r += r
+        agent.replay(min(BATCH_SIZE, len(agent.memory)))
 
     print(f"Reward for {test_steps} steps: {all_r} ")
