@@ -59,7 +59,7 @@ if __name__ == "__main__":
         next_frame, r, done, _ = env.step(action)
         all_r += r
 
-        print('EPISODE', i, ':', action, '->', all_r)
+        print('STEP', i, ':', action, '->', all_r)
 
         # next_obs takes the last 2 entries in our initial observation and adds the current frame
         next_obs = curr_obs[1:] + [next_frame]
